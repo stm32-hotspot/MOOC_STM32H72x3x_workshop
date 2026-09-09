@@ -1,0 +1,23 @@
+The following files can't be shared on Github, since they are subject to some restrictive license terms requiring the user's approval via a "click thru" procedure.
+If needed, they can be found inside the full firmware package available on our website st.com and downloadable from here: https://www.st.com/en/embedded-software/stm32cubeh7.html#get-software. You will be prompted to login or to register in case you have no account.
+
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Inc/pdm2pcm_glo.h
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM3_GCC_wc16.a
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM3_GCC_wc32.a
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM3_IAR_wc16.a
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM3_IAR_wc32.a
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM3_Keil_wc16.lib
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM4_GCC_wc16.a
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM4_GCC_wc16_softfp.a
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM4_GCC_wc32.a
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM4_GCC_wc32_softfp.a
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM4_IAR_wc16.a
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM4_IAR_wc32.a
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM4_Keil_wc16.lib
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM7_GCC_wc16.a
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM7_GCC_wc16_softfp.a
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM7_GCC_wc32.a
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM7_GCC_wc32_softfp.a
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM7_IAR_wc16.a
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM7_IAR_wc32.a
+Hands-on/HandsOn02/Middlewares/ST/STM32_Audio/Addons/PDM/Lib/libPDMFilter_CM7_Keil_wc16.lib

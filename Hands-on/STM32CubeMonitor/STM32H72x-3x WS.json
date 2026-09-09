@@ -1,0 +1,1509 @@
+[
+    {
+        "id": "6d39f8f3.288dc8",
+        "type": "tab",
+        "label": "STM32H72x/3x Workshop",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "8381c865.236028",
+        "type": "subflow",
+        "name": "Single value",
+        "info": "The 'single value' subflow allows to :\r\n * Filter Data to extract only one variable after the \"processing node\" step .\r\n * Modify the message to fit with standard widgets such as gauges.\r\n * Limit the number of messages to a maximum of 10 msg per second.\r\n\r\n### **Input**\r\n\r\nThe subflow 'single value' takes in input the `msg.payload`\r\nfrom the processing output. All the messages sent by the processing node have the same structure.\r\n\r\n    \"payload\": {\r\n        \"groupname\": \"Snapshot2\",\r\n        \"variabledata\": [\r\n            {\r\n                \"y\": \"9\",\r\n                \"x\": \"1567509421459\"\r\n            },\r\n            {\r\n                \"y\": \"9\",\r\n                \"x\": \"1567509421459\"\r\n            },\r\n            {\r\n                \"y\": \"9\",\r\n                \"x\": \"1567509421459\"\r\n            }\r\n        ],\r\n        \"variablename\": \"int2\"\r\n      }\r\n    }\r\n\r\n### **Filter on selected variable**\r\nSeveral messages are sent by the processing node for each variable, so the first step of this 'single value' subflow is to filter and keep only messages related to the selected variable.\r\nThe 'filter variable' node will only keep messages with the right `variablename` key.\r\n\r\n### **Extract duplets table**\r\n\r\nThe received message is an Object containing {groupname, variabledata[array], variablename}.  \r\nThe array contains two variables :\r\n - `y` the value \r\n - `x` the time\r\n\r\nA single message contains multiple pairs of values extract at a regular time interval.\r\nThe time interval depends on the acquisition frequency.\r\nWith the 'change' node and the `set` property, the `msg.payload` is set to \r\n`msg.payload.variabledata`, only the data variable array is set into msg.payload.\r\n\r\n    \"payload\": {\r\n        \"variabledata\": [\r\n            {\r\n                \"y\": \"9\",\r\n                \"x\": \"1567509421459\"\r\n            },\r\n            {\r\n                \"y\": \"9\",\r\n                \"x\": \"1567509421459\"\r\n            },\r\n            {\r\n                \"y\": \"9\",\r\n                \"x\": \"1567509421459\"\r\n            }\r\n        ]\r\n    }\r\n\r\n### **Split duplets table**\r\n\r\nThe data variable array is split with a length of one in smaller objects by the 'split' node.\r\nEach new object contains two subvariables : `y` and `x`.\r\n\r\n    \"payload\": {\r\n        \"y\": \"9\",\r\n        \"x\": \"1567509421459\"\r\n    }\r\n\r\n\r\n### **Limit the number of messages**\r\n\r\nThe 'delay' node allows to limit the maximum number of message per second.\r\nIn the 'single value' subflow, one message is extracted per second.\r\n\r\n>_Be careful, a dashboard saturation risk exists if too many messages are received per second._\r\n\r\n### **Extract only y values**\r\n\r\nThe `msg.payload` is set to `msg.payload.y` with the `set` property. \r\nOnly `y` variable is set into msg.payload as single value.\r\n\r\n    \"payload\": { \r\n        \"y\": \"9\" \r\n    }\r\n\r\n### **Output** \r\n\r\nSome widgets such as the gauge and the text node are using the `msg.payload` property.  \r\nThe output node is linked to a gauge that allows to see the evolution \r\nof the `y` variable as a function of time.\r\n\r\n\r\n![subflow_gauge](images/subflow_gauge.png)\r\n\r\n### **Details**\r\n\r\nNote : The debug node allows to see clearly and easily the \r\nmessage at the node output.  \r\n\r\n\r\n> More details on [Node-Red][nr]\r\n[nr]: https://nodered.org/docs/user-guide/editor/workspace/subflows\r\n\r\n\r\n-------\r\n\r\n",
+        "category": "",
+        "in": [
+            {
+                "x": 40,
+                "y": 60,
+                "wires": [
+                    {
+                        "id": "3c5ffe0d.9063b2"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 780,
+                "y": 140,
+                "wires": [
+                    {
+                        "id": "66397fd3.d8111",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": [
+            {
+                "name": "varfilter",
+                "type": "str",
+                "value": ""
+            }
+        ],
+        "color": "#DDAA99"
+    },
+    {
+        "id": "6d5669d1.709fa8",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-light",
+            "lightTheme": {
+                "default": "#3CB4E6",
+                "baseColor": "#3CB4E6",
+                "baseFont": "Arial,Arial,Helvetica,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#097479",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "customTheme": {
+                "name": "Untitled Theme 1",
+                "default": "#4B7930",
+                "baseColor": "#4B7930",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "reset": false
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#3CB4E6",
+                    "value": "#3CB4E6",
+                    "edited": false
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#3CB4E6",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#fafafa",
+                    "edited": false
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#80ceef",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#111111",
+                    "edited": false
+                },
+                "widget-backgroundColor": {
+                    "value": "#3cb4e6",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "base-font": {
+                    "value": "Arial,Arial,Helvetica,sans-serif"
+                }
+            },
+            "angularTheme": {
+                "primary": "indigo",
+                "accents": "blue",
+                "warn": "red",
+                "background": "grey"
+            }
+        },
+        "site": {
+            "name": "Node-RED Dashboard",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "lockMenu": "false",
+            "allowTempTheme": "true",
+            "dateFormat": "DD/MM/YYYY",
+            "sizes": {
+                "sx": 48,
+                "sy": 48,
+                "gx": 6,
+                "gy": 6,
+                "cx": 6,
+                "cy": 6,
+                "px": 0,
+                "py": 0
+            }
+        }
+    },
+    {
+        "id": "deec6be8.da6b58",
+        "type": "ui_group",
+        "z": "",
+        "name": "Perf Demo",
+        "tab": "a7672b2.c1475d8",
+        "order": 3,
+        "disp": true,
+        "width": "28",
+        "collapse": false
+    },
+    {
+        "id": "81953e65.0054",
+        "type": "exe-config",
+        "z": "",
+        "name": "MySlowVarList",
+        "exefile": "C:\\STM32H7EcoWS\\HandsOn01\\STM32H735G-DK.elf",
+        "exefolder": "C:\\STM32H7EcoWS\\HandsOn01",
+        "exevariablelist": [
+            {
+                "address": "0x2400802c",
+                "name": "basicCounter",
+                "type": 3
+            },
+            {
+                "address": "0x08001dfc",
+                "name": "D1CorePrescTable[0]",
+                "type": 1
+            },
+            {
+                "address": "0x24000001",
+                "name": "H7Demo.Cmd_Audio",
+                "type": 1
+            },
+            {
+                "address": "0x24000000",
+                "name": "H7Demo.Cmd_Cache",
+                "type": 1
+            },
+            {
+                "address": "0x24000002",
+                "name": "H7Demo.Cmd_LCD",
+                "type": 1
+            },
+            {
+                "address": "0x24000008",
+                "name": "H7Demo.NbFuncCalls",
+                "type": 3
+            },
+            {
+                "address": "0x24000006",
+                "name": "H7Demo.PerfValue",
+                "type": 3
+            },
+            {
+                "address": "0x24000004",
+                "name": "H7Demo.Status_Audio",
+                "type": 1,
+                "checked": true
+            },
+            {
+                "address": "0x24000003",
+                "name": "H7Demo.Status_Cache",
+                "type": 1,
+                "checked": true
+            },
+            {
+                "address": "0x24000005",
+                "name": "H7Demo.Status_LCD",
+                "type": 1,
+                "checked": true
+            },
+            {
+                "address": "0x24008000",
+                "name": "SystemCoreClock",
+                "type": 5
+            },
+            {
+                "address": "0x24008004",
+                "name": "SystemD2Clock",
+                "type": 5
+            },
+            {
+                "address": "0x24008030",
+                "name": "uwTick",
+                "type": 5
+            },
+            {
+                "address": "0x2400800c",
+                "name": "uwTickFreq",
+                "type": 2
+            },
+            {
+                "address": "0x24008008",
+                "name": "uwTickPrio",
+                "type": 5
+            }
+        ],
+        "expand": false,
+        "filename": "STM32H735G-DK.elf",
+        "exeModifiedTime": 1605133243200,
+        "configLastUpdate": 1605133768279
+    },
+    {
+        "id": "e7dc6a2.fafb998",
+        "type": "exe-config",
+        "z": "",
+        "name": "MyVarList",
+        "exefile": "C:\\STM32H7EcoWS\\HandsOn01\\STM32H735G-DK.elf",
+        "exefolder": "C:\\STM32H7EcoWS\\HandsOn01",
+        "exevariablelist": [
+            {
+                "address": "0x2400802c",
+                "name": "basicCounter",
+                "type": 3
+            },
+            {
+                "address": "0x08001dfc",
+                "name": "D1CorePrescTable[0]",
+                "type": 1
+            },
+            {
+                "address": "0x24000001",
+                "name": "H7Demo.Cmd_Audio",
+                "type": 1
+            },
+            {
+                "address": "0x24000000",
+                "name": "H7Demo.Cmd_Cache",
+                "type": 1
+            },
+            {
+                "address": "0x24000002",
+                "name": "H7Demo.Cmd_LCD",
+                "type": 1
+            },
+            {
+                "address": "0x24000008",
+                "name": "H7Demo.NbFuncCalls",
+                "type": 3
+            },
+            {
+                "address": "0x24000006",
+                "name": "H7Demo.PerfValue",
+                "type": 3,
+                "checked": true
+            },
+            {
+                "address": "0x24000004",
+                "name": "H7Demo.Status_Audio",
+                "type": 1
+            },
+            {
+                "address": "0x24000003",
+                "name": "H7Demo.Status_Cache",
+                "type": 1
+            },
+            {
+                "address": "0x24000005",
+                "name": "H7Demo.Status_LCD",
+                "type": 1
+            },
+            {
+                "address": "0x24008000",
+                "name": "SystemCoreClock",
+                "type": 5
+            },
+            {
+                "address": "0x24008004",
+                "name": "SystemD2Clock",
+                "type": 5
+            },
+            {
+                "address": "0x24008030",
+                "name": "uwTick",
+                "type": 5
+            },
+            {
+                "address": "0x2400800c",
+                "name": "uwTickFreq",
+                "type": 2
+            },
+            {
+                "address": "0x24008008",
+                "name": "uwTickPrio",
+                "type": 5
+            }
+        ],
+        "expand": false,
+        "filename": "STM32H735G-DK.elf",
+        "exeModifiedTime": 1605133243200,
+        "configLastUpdate": 1605133779454
+    },
+    {
+        "id": "5cee43a6.b10adc",
+        "type": "exe-config",
+        "z": "",
+        "name": "MySlowWriteList",
+        "exefile": "C:\\STM32H7EcoWS\\HandsOn01\\STM32H735G-DK.elf",
+        "exefolder": "C:\\STM32H7EcoWS\\HandsOn01",
+        "exevariablelist": [
+            {
+                "address": "0x2400802c",
+                "name": "basicCounter",
+                "type": 3
+            },
+            {
+                "address": "0x08001dfc",
+                "name": "D1CorePrescTable[0]",
+                "type": 1
+            },
+            {
+                "address": "0x24000001",
+                "name": "H7Demo.Cmd_Audio",
+                "type": 1
+            },
+            {
+                "address": "0x24000000",
+                "name": "H7Demo.Cmd_Cache",
+                "type": 1
+            },
+            {
+                "address": "0x24000002",
+                "name": "H7Demo.Cmd_LCD",
+                "type": 1
+            },
+            {
+                "address": "0x24000008",
+                "name": "H7Demo.NbFuncCalls",
+                "type": 3,
+                "checked": true
+            },
+            {
+                "address": "0x24000006",
+                "name": "H7Demo.PerfValue",
+                "type": 3
+            },
+            {
+                "address": "0x24000004",
+                "name": "H7Demo.Status_Audio",
+                "type": 1
+            },
+            {
+                "address": "0x24000003",
+                "name": "H7Demo.Status_Cache",
+                "type": 1
+            },
+            {
+                "address": "0x24000005",
+                "name": "H7Demo.Status_LCD",
+                "type": 1
+            },
+            {
+                "address": "0x24008000",
+                "name": "SystemCoreClock",
+                "type": 5
+            },
+            {
+                "address": "0x24008004",
+                "name": "SystemD2Clock",
+                "type": 5
+            },
+            {
+                "address": "0x24008030",
+                "name": "uwTick",
+                "type": 5
+            },
+            {
+                "address": "0x2400800c",
+                "name": "uwTickFreq",
+                "type": 2
+            },
+            {
+                "address": "0x24008008",
+                "name": "uwTickPrio",
+                "type": 5
+            }
+        ],
+        "expand": false,
+        "filename": "STM32H735G-DK.elf",
+        "exeModifiedTime": 1605133243200,
+        "configLastUpdate": 1605133787678
+    },
+    {
+        "id": "a7672b2.c1475d8",
+        "type": "ui_tab",
+        "z": "",
+        "name": "STM32H72x/3x",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "dee3a170.a06e3",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 1,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "eee62e26.47705",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 3,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "55214aca.f499f4",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 5,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "befae00a.bcb74",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 7,
+        "width": 12,
+        "height": 1
+    },
+    {
+        "id": "7cfac72e.c53588",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 10,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "578b512b.bea2d",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 12,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "7d110cad.440cf4",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 13,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "362cc43a.36ed0c",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 14,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "a5c377de.577238",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 15,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "ab780c71.84748",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 16,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "9a296729.8a0e78",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 17,
+        "width": 28,
+        "height": 1
+    },
+    {
+        "id": "b3004704.ef6958",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 18,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "380bf623.0d796a",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 20,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "2ec9174c.56fea8",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 22,
+        "width": 8,
+        "height": 1
+    },
+    {
+        "id": "ab98697b.096e88",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 24,
+        "width": 3,
+        "height": 1
+    },
+    {
+        "id": "6dda3dd1.a82884",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 25,
+        "width": 28,
+        "height": 1
+    },
+    {
+        "id": "e78a5643.a93948",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 26,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "99b22428.2a6318",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 28,
+        "width": 3,
+        "height": 1
+    },
+    {
+        "id": "ebe1b52b.c80f28",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 30,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "acb8abbe.294e98",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 32,
+        "width": 13,
+        "height": 1
+    },
+    {
+        "id": "a55417c4.750188",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 33,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "45ce7a98.ffb5f4",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 35,
+        "width": 3,
+        "height": 1
+    },
+    {
+        "id": "b8f13ab1.1d5e28",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 37,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "fb891a0d.70c008",
+        "type": "ui_spacer",
+        "name": "spacer",
+        "group": "deec6be8.da6b58",
+        "order": 39,
+        "width": 13,
+        "height": 1
+    },
+    {
+        "id": "3c5ffe0d.9063b2",
+        "type": "switch",
+        "z": "8381c865.236028",
+        "name": "filter variable",
+        "property": "payload.variablename",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "varfilter",
+                "vt": "env"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 170,
+        "y": 60,
+        "wires": [
+            [
+                "4e5ba7a5.14dec8"
+            ]
+        ]
+    },
+    {
+        "id": "4e5ba7a5.14dec8",
+        "type": "change",
+        "z": "8381c865.236028",
+        "name": "keep only table of duplets",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.variabledata",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 430,
+        "y": 60,
+        "wires": [
+            [
+                "42bc6ed.5b20d9"
+            ]
+        ]
+    },
+    {
+        "id": "42bc6ed.5b20d9",
+        "type": "split",
+        "z": "8381c865.236028",
+        "name": "Split a table[1..n] of duplets in n msg of single duplet",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 800,
+        "y": 60,
+        "wires": [
+            [
+                "8b8ddb84.6fb208"
+            ]
+        ]
+    },
+    {
+        "id": "8b8ddb84.6fb208",
+        "type": "delay",
+        "z": "8381c865.236028",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "10",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "x": 200,
+        "y": 140,
+        "wires": [
+            [
+                "66397fd3.d8111"
+            ]
+        ]
+    },
+    {
+        "id": "66397fd3.d8111",
+        "type": "change",
+        "z": "8381c865.236028",
+        "name": "keep only value and delete timestamp",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.y",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 490,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "54d6e8d.6591f18",
+        "type": "ui_button",
+        "z": "6d39f8f3.288dc8",
+        "name": "",
+        "group": "deec6be8.da6b58",
+        "order": 2,
+        "width": 3,
+        "height": 1,
+        "passthru": true,
+        "label": "START Acquisition",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "start",
+        "x": 190,
+        "y": 80,
+        "wires": [
+            [
+                "f4492bc0.65de38",
+                "554edfad.f910e",
+                "7be57771.aafc98"
+            ]
+        ]
+    },
+    {
+        "id": "3e9a5581.7e226a",
+        "type": "ui_button",
+        "z": "6d39f8f3.288dc8",
+        "name": "",
+        "group": "deec6be8.da6b58",
+        "order": 4,
+        "width": 3,
+        "height": 1,
+        "passthru": true,
+        "label": "STOP Acquisition",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "stop",
+        "x": 190,
+        "y": 160,
+        "wires": [
+            [
+                "f4492bc0.65de38",
+                "554edfad.f910e",
+                "7be57771.aafc98"
+            ]
+        ]
+    },
+    {
+        "id": "e33227b1.e6d088",
+        "type": "processing",
+        "z": "6d39f8f3.288dc8",
+        "groupname": "Fast acq variables",
+        "groupid": "459e8c5f.3850c4",
+        "expressions": [
+            {
+                "index": "2",
+                "formula": "round((310/H7Demo.PerfValue)*100)",
+                "name": "PerfPercent"
+            }
+        ],
+        "statistics": [],
+        "logmode": "full",
+        "x": 450,
+        "y": 560,
+        "wires": [
+            [
+                "b80d5d71.9fb8c",
+                "3a10ae28.ebf012"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "e307307d.7b521",
+        "type": "subflow:8381c865.236028",
+        "z": "6d39f8f3.288dc8",
+        "name": "H7Demo.Status_Cache",
+        "env": [
+            {
+                "name": "varfilter",
+                "value": "H7Demo.Status_Cache",
+                "type": "str"
+            }
+        ],
+        "x": 770,
+        "y": 680,
+        "wires": [
+            [
+                "d448a8b6.cbf238"
+            ]
+        ]
+    },
+    {
+        "id": "faf460fe.9f9da",
+        "type": "ui_gauge",
+        "z": "6d39f8f3.288dc8",
+        "name": "Perf (%)",
+        "group": "deec6be8.da6b58",
+        "order": 9,
+        "width": 11,
+        "height": 4,
+        "gtype": "gage",
+        "title": "Perf (%)",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 1080,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "d448a8b6.cbf238",
+        "type": "ui_led",
+        "z": "6d39f8f3.288dc8",
+        "group": "deec6be8.da6b58",
+        "order": 27,
+        "width": 3,
+        "height": 1,
+        "label": "Cache",
+        "labelPlacement": "left",
+        "labelAlignment": "center",
+        "colorForValue": [
+            {
+                "color": "red",
+                "value": "1",
+                "valueType": "num"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "name": "Cache",
+        "x": 1070,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "64d99695.65b9c8",
+        "type": "ui_switch",
+        "z": "6d39f8f3.288dc8",
+        "name": "Cache Enable/Disable",
+        "label": "ON / OFF",
+        "tooltip": "",
+        "group": "deec6be8.da6b58",
+        "order": 34,
+        "width": 3,
+        "height": 1,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "",
+        "style": "",
+        "onvalue": "1",
+        "onvalueType": "num",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "0",
+        "offvalueType": "num",
+        "officon": "",
+        "offcolor": "",
+        "x": 200,
+        "y": 240,
+        "wires": [
+            [
+                "febedc9c.60b6f"
+            ]
+        ]
+    },
+    {
+        "id": "febedc9c.60b6f",
+        "type": "template",
+        "z": "6d39f8f3.288dc8",
+        "name": "H7Demo.Cmd_Cache",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "json",
+        "syntax": "mustache",
+        "template": "{\n    \"variablelist\": [\n        {\n            \"address\": \"0x24000000\",\n            \"type\": 1,\n            \"value\": \"{{payload}}\"\n        }\n    ],\n    \"accesspoint\": 0\n}",
+        "output": "json",
+        "x": 480,
+        "y": 240,
+        "wires": [
+            [
+                "eadaeee1.90f8d"
+            ]
+        ]
+    },
+    {
+        "id": "eadaeee1.90f8d",
+        "type": "change",
+        "z": "6d39f8f3.288dc8",
+        "name": "set write",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "write",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 820,
+        "y": 280,
+        "wires": [
+            [
+                "2d8ae206.543c0e"
+            ]
+        ]
+    },
+    {
+        "id": "f4492bc0.65de38",
+        "type": "variables",
+        "z": "6d39f8f3.288dc8",
+        "groupname": "Slow acq variables",
+        "accesspoint": 0,
+        "execonfig": "81953e65.0054",
+        "variablelist": [],
+        "triggerstartmode": "manual",
+        "triggername": "H7Demo.Status_Audio",
+        "triggerthreshold": "30000",
+        "frequency": "",
+        "frequencyType": "10",
+        "snapshotheader": "",
+        "mode": "direct",
+        "lastImportedTime": 1611830984579,
+        "openStatus": true,
+        "x": 470,
+        "y": 160,
+        "wires": [
+            [
+                "2d8ae206.543c0e"
+            ]
+        ]
+    },
+    {
+        "id": "1aa48009.53f03",
+        "type": "ui_switch",
+        "z": "6d39f8f3.288dc8",
+        "name": "Audio Streaming ON/OFF",
+        "label": "ON / OFF",
+        "tooltip": "",
+        "group": "deec6be8.da6b58",
+        "order": 36,
+        "width": 3,
+        "height": 1,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "",
+        "style": "",
+        "onvalue": "1",
+        "onvalueType": "num",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "0",
+        "offvalueType": "num",
+        "officon": "",
+        "offcolor": "",
+        "x": 210,
+        "y": 280,
+        "wires": [
+            [
+                "481d3b4e.99b2a4"
+            ]
+        ]
+    },
+    {
+        "id": "481d3b4e.99b2a4",
+        "type": "template",
+        "z": "6d39f8f3.288dc8",
+        "name": "H7Demo.Cmd_Audio",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "json",
+        "syntax": "mustache",
+        "template": "{\n    \"variablelist\": [\n        {\n            \"address\": \"0x24000001\",\n            \"type\": 1,\n            \"value\": \"{{payload}}\"\n        }\n    ],\n    \"accesspoint\": 0\n}",
+        "output": "json",
+        "x": 480,
+        "y": 280,
+        "wires": [
+            [
+                "eadaeee1.90f8d"
+            ]
+        ]
+    },
+    {
+        "id": "5ff01a1b.332004",
+        "type": "ui_switch",
+        "z": "6d39f8f3.288dc8",
+        "name": "LCD display ON/OFF",
+        "label": "ON / OFF",
+        "tooltip": "",
+        "group": "deec6be8.da6b58",
+        "order": 38,
+        "width": 3,
+        "height": 1,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "",
+        "style": "",
+        "onvalue": "1",
+        "onvalueType": "num",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "0",
+        "offvalueType": "num",
+        "officon": "",
+        "offcolor": "",
+        "x": 200,
+        "y": 320,
+        "wires": [
+            [
+                "dc19ab98.0ce898"
+            ]
+        ]
+    },
+    {
+        "id": "dc19ab98.0ce898",
+        "type": "template",
+        "z": "6d39f8f3.288dc8",
+        "name": "H7Demo.Cmd_LCD",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "json",
+        "syntax": "mustache",
+        "template": "{\n    \"variablelist\": [\n        {\n            \"address\": \"0x24000002\",\n            \"type\": 1,\n            \"value\": \"{{payload}}\"\n        }\n    ],\n    \"accesspoint\": 0\n}",
+        "output": "json",
+        "x": 480,
+        "y": 320,
+        "wires": [
+            [
+                "eadaeee1.90f8d"
+            ]
+        ]
+    },
+    {
+        "id": "554edfad.f910e",
+        "type": "variables",
+        "z": "6d39f8f3.288dc8",
+        "groupname": "Fast acq variables",
+        "accesspoint": 0,
+        "execonfig": "e7dc6a2.fafb998",
+        "variablelist": [],
+        "triggerstartmode": "manual",
+        "triggername": "H7Demo.PerfValue",
+        "triggerthreshold": "",
+        "frequency": "",
+        "frequencyType": "0",
+        "snapshotheader": "",
+        "mode": "direct",
+        "lastImportedTime": 1605133779818,
+        "openStatus": true,
+        "x": 470,
+        "y": 100,
+        "wires": [
+            [
+                "2d8ae206.543c0e"
+            ]
+        ]
+    },
+    {
+        "id": "dd3ce4a8.fa6b68",
+        "type": "ui_chartst",
+        "z": "6d39f8f3.288dc8",
+        "group": "deec6be8.da6b58",
+        "name": "Perf",
+        "order": 8,
+        "width": 17,
+        "height": 7,
+        "chartType": "line",
+        "curveType": "linear",
+        "duration": "10",
+        "ymin": "0",
+        "ymax": "2000",
+        "x": 1070,
+        "y": 480,
+        "wires": [],
+        "inputLabels": [
+            "MIPSDemo_PerfValue"
+        ]
+    },
+    {
+        "id": "dd9a5aab.f2b0e8",
+        "type": "ui_led",
+        "z": "6d39f8f3.288dc8",
+        "group": "deec6be8.da6b58",
+        "order": 29,
+        "width": 3,
+        "height": 1,
+        "label": "Audio stream",
+        "labelPlacement": "left",
+        "labelAlignment": "center",
+        "colorForValue": [
+            {
+                "color": "yellow",
+                "value": "1",
+                "valueType": "num"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "name": "Audio streaming",
+        "x": 1100,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "b80d5d71.9fb8c",
+        "type": "switch",
+        "z": "6d39f8f3.288dc8",
+        "name": "H7Demo.PerfValue",
+        "property": "payload.variablename",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "H7Demo.PerfValue",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 770,
+        "y": 520,
+        "wires": [
+            [
+                "dd3ce4a8.fa6b68",
+                "ff02cc6a.55408"
+            ]
+        ]
+    },
+    {
+        "id": "95ed97e1.5f5818",
+        "type": "ui_text",
+        "z": "6d39f8f3.288dc8",
+        "group": "deec6be8.da6b58",
+        "order": 21,
+        "width": 3,
+        "height": 1,
+        "name": "",
+        "label": "Perf (%)",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "x": 1080,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "38dbe5d.d73671a",
+        "type": "ui_led",
+        "z": "6d39f8f3.288dc8",
+        "group": "deec6be8.da6b58",
+        "order": 31,
+        "width": 3,
+        "height": 1,
+        "label": "LCD display",
+        "labelPlacement": "left",
+        "labelAlignment": "center",
+        "colorForValue": [
+            {
+                "color": "yellow",
+                "value": "1",
+                "valueType": "num"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "name": "LCD display",
+        "x": 1090,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "c9a536bf.c10328",
+        "type": "ui_button",
+        "z": "6d39f8f3.288dc8",
+        "name": "",
+        "group": "deec6be8.da6b58",
+        "order": 6,
+        "width": 2,
+        "height": 1,
+        "passthru": false,
+        "label": "CLEAR Chart",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "clear",
+        "x": 780,
+        "y": 480,
+        "wires": [
+            [
+                "dd3ce4a8.fa6b68"
+            ]
+        ]
+    },
+    {
+        "id": "ff02cc6a.55408",
+        "type": "ui_text",
+        "z": "6d39f8f3.288dc8",
+        "group": "deec6be8.da6b58",
+        "order": 19,
+        "width": 4,
+        "height": 1,
+        "name": "Perf value",
+        "label": "CPU cycles / function",
+        "format": "{{msg.payload.variabledata[0].y}}",
+        "layout": "col-center",
+        "x": 1080,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "df1323d3.8a71b",
+        "type": "ui_write",
+        "z": "6d39f8f3.288dc8",
+        "group": "deec6be8.da6b58",
+        "name": "",
+        "order": 11,
+        "width": 9,
+        "height": 3,
+        "x": 830,
+        "y": 40,
+        "wires": [
+            [
+                "2d8ae206.543c0e"
+            ]
+        ]
+    },
+    {
+        "id": "fc33d9b8.481898",
+        "type": "subflow:8381c865.236028",
+        "z": "6d39f8f3.288dc8",
+        "name": "H7Demo.NbFuncCalls",
+        "env": [
+            {
+                "name": "varfilter",
+                "value": "H7Demo.NbFuncCalls",
+                "type": "str"
+            }
+        ],
+        "x": 760,
+        "y": 400,
+        "wires": [
+            [
+                "fa7785b2.b46558"
+            ]
+        ]
+    },
+    {
+        "id": "fa7785b2.b46558",
+        "type": "ui_text",
+        "z": "6d39f8f3.288dc8",
+        "group": "deec6be8.da6b58",
+        "order": 23,
+        "width": 5,
+        "height": 1,
+        "name": "",
+        "label": "Function calls",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "x": 1100,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "3901e27f.5278ee",
+        "type": "processing",
+        "z": "6d39f8f3.288dc8",
+        "groupname": "Slow acq Write variables",
+        "groupid": "842b3ace.e42cf8",
+        "expressions": [],
+        "statistics": [],
+        "logmode": "changes",
+        "x": 470,
+        "y": 420,
+        "wires": [
+            [
+                "fc33d9b8.481898"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "7be57771.aafc98",
+        "type": "variables",
+        "z": "6d39f8f3.288dc8",
+        "groupname": "Slow acq Write variables",
+        "accesspoint": 0,
+        "execonfig": "5cee43a6.b10adc",
+        "variablelist": [],
+        "triggerstartmode": "manual",
+        "triggername": "H7Demo.NbFuncCalls",
+        "triggerthreshold": "",
+        "frequency": "",
+        "frequencyType": "10",
+        "snapshotheader": "",
+        "mode": "direct",
+        "lastImportedTime": 1605133788076,
+        "openStatus": true,
+        "x": 490,
+        "y": 40,
+        "wires": [
+            [
+                "df1323d3.8a71b",
+                "2d8ae206.543c0e"
+            ]
+        ]
+    },
+    {
+        "id": "55e6ce2e.af0dc",
+        "type": "processing",
+        "z": "6d39f8f3.288dc8",
+        "groupname": "Slow acq variables",
+        "groupid": "5e20abde.9dea54",
+        "expressions": [],
+        "statistics": [],
+        "logmode": "changes",
+        "x": 450,
+        "y": 720,
+        "wires": [
+            [
+                "e307307d.7b521",
+                "124604fc.4e600b",
+                "3d0c122b.784d8e"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "3a10ae28.ebf012",
+        "type": "subflow:8381c865.236028",
+        "z": "6d39f8f3.288dc8",
+        "name": "Perf %",
+        "env": [
+            {
+                "name": "varfilter",
+                "value": "PerfPercent",
+                "type": "str"
+            }
+        ],
+        "x": 770,
+        "y": 600,
+        "wires": [
+            [
+                "95ed97e1.5f5818",
+                "faf460fe.9f9da"
+            ]
+        ]
+    },
+    {
+        "id": "124604fc.4e600b",
+        "type": "subflow:8381c865.236028",
+        "z": "6d39f8f3.288dc8",
+        "name": "H7Demo.Status_Audio",
+        "env": [
+            {
+                "name": "varfilter",
+                "value": "H7Demo.Status_Audio",
+                "type": "str"
+            }
+        ],
+        "x": 760,
+        "y": 720,
+        "wires": [
+            [
+                "dd9a5aab.f2b0e8"
+            ]
+        ]
+    },
+    {
+        "id": "3d0c122b.784d8e",
+        "type": "subflow:8381c865.236028",
+        "z": "6d39f8f3.288dc8",
+        "name": "H7Demo.Status_LCD",
+        "env": [
+            {
+                "name": "varfilter",
+                "value": "H7Demo.Status_LCD",
+                "type": "str"
+            }
+        ],
+        "x": 760,
+        "y": 760,
+        "wires": [
+            [
+                "38dbe5d.d73671a"
+            ]
+        ]
+    },
+    {
+        "id": "2d8ae206.543c0e",
+        "type": "acquisition out",
+        "z": "6d39f8f3.288dc8",
+        "name": "H7Demo to MCU",
+        "probeconfig": "",
+        "x": 1110,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "321c3246.03780e",
+        "type": "acquisition in",
+        "z": "6d39f8f3.288dc8",
+        "name": "MCU to H7Demo",
+        "probeconfig": "",
+        "x": 180,
+        "y": 580,
+        "wires": [
+            [
+                "3901e27f.5278ee",
+                "e33227b1.e6d088",
+                "55e6ce2e.af0dc"
+            ],
+            []
+        ]
+    }
+]
